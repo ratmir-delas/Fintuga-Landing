@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete User Profile</title>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-auth.js"></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
+    <script src=''></script>
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAxn9H3FiCW8pZzLEwe-mj65ehwrA7EVmc",
+            authDomain: "fintuga-e8fc5.firebaseapp.com",
+            databaseURL: "https://fintuga-e8fc5-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "fintuga-e8fc5",
+            storageBucket: "fintuga-e8fc5.appspot.com",
+            messagingSenderId: "604046092043",
+            appId: "1:604046092043:web:493ecfbbb6700d5588e40e",
+            measurementId: "G-8ESFGRV4LG"
+        };
+        initializeApp(firebaseConfig);
+
+        // Configure Google Sign-In
+        function configureGoogleSignIn() {
+            gapi.load('auth2', function() {
+                gapi.auth2.init({
+                    client_id: '604046092043-9rgrgu7dlv9dm8icj6gqeeab18vfbjkr.apps.googleusercontent.com',
+                });
+            });
+        }
+
+        // Delete user profile function
+        function deleteProfile() {
+            const user = firebase.auth().currentUser;
+
+            if (user) {
+                const confirmation = confirm("Do you really want to delete your account?");
+                if (confirmation) {
+                    user.delete()
+                        .then(() => {
+                            // User profile deleted successfully
+                            console.log("User profile deleted successfully.");
+                            // Redirect or perform any other actions after profile deletion
+                        })
+                        .catch((error) => {
+                            // An error occurred during profile deletion
+                            console.error("Error deleting user profile:", error);
+                        });
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+<h1>Delete User Profile</h1>
+<form onsubmit="event.preventDefault();">
+    <div id="google-signin-button"></div>
+    <button onclick="deleteProfile();" disabled>Delete Profile</button>
+</form>
+<script>
+    // Google Sign-In callback
+    function onSignIn(googleUser) {
+        var credential = firebase.auth.GoogleAuthProvider.credential(googleUser.getAuthResponse().id_token);
+        firebase.auth().signInWithCredential(credential).then(function(result) {
+            // If the user has just signed in, enable the "Delete Profile" button
+            document.querySelector('button').disabled = false;
+        }).catch(function(error) {
+            // Handle Errors here.
+            console.error(error);
+        });
+    }
+
+    // Render Google Sign-In button
+    function renderGoogleSignInButton() {
+        gapi.signin2.render('google-signin-button', {
+            'scope': 'profile email',
+            'width': 240,
+            'height': 50,
+            'longtitle': true,
+            'theme': 'dark',
+            'onsuccess': onSignIn
+        });
+    }
+
+    // Initialize Google Sign-In and render the button
+    function init() {
+        configureGoogleSignIn();
+        gapi.load('signin2', renderGoogleSignInButton);
+    }
+
+    // Call initializeApp when the Google API is loaded
+    window.onload = init;
+</script>
+</body>
+</html>

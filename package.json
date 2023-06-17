@@ -1,0 +1,8 @@
+{
+  "name": "mobster",
+  "version": "1.0.0",
+  "dependencies": {
+    "@firebase/app": "^0.9.12",
+    "firebaseui": "^6.0.2"
+  }
+}
